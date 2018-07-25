@@ -28,6 +28,9 @@ var config = {
         "wgd1pin": 5,
         "sspin": 0,
         "rfidgain": 32,
+        "swtype": 0,
+        "swpin": 2,
+        "bpin": 0,
         "rtype": 1,
         "rpin": 4,
         "rtime": 400
@@ -120,6 +123,9 @@ function listhardware() {
     document.getElementById("wg1pin").value = config.hardware.wgd1pin;
     document.getElementById("gpioss").value = config.hardware.sspin;
     document.getElementById("gain").value = config.hardware.rfidgain;
+    document.getElementById("gpiobzr").value = config.hardware.bpin;
+    document.getElementById("typeswch").value = config.hardware.swtype;
+    document.getElementById("gpioswch").value = config.hardware.swpin;
     document.getElementById("typerly").value = config.hardware.rtype;
     document.getElementById("gpiorly").value = config.hardware.rpin;
     document.getElementById("delay").value = config.hardware.rtime;
@@ -164,6 +170,9 @@ function savehardware() {
     config.hardware.wgd1pin = parseInt(document.getElementById("wg1pin").value);
     config.hardware.sspin = parseInt(document.getElementById("gpioss").value);
     config.hardware.rfidgain = parseInt(document.getElementById("gain").value);
+    config.hardware.bpin = parseInt(document.getElementById("gpiobzr").value);
+    config.hardware.swtype = parseInt(document.getElementById("typeswch").value);
+    config.hardware.swpin = parseInt(document.getElementById("gpioswch").value);
     config.hardware.rtype = parseInt(document.getElementById("typerly").value);
     config.hardware.rpin = parseInt(document.getElementById("gpiorly").value);
     config.hardware.rtime = parseInt(document.getElementById("delay").value);
@@ -472,6 +481,10 @@ function builddata(obj) {
 
 function testRelay() {
     websock.send("{\"command\":\"testrelay\"}");
+}
+
+function testBuzzer() {
+    websock.send("{\"command\":\"testbuzzer\"}");
 }
 
 

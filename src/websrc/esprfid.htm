@@ -197,6 +197,57 @@
     </div>
     <br>
     <div class="row form-group">
+        <label class="col-xs-3">Buzzer Pin<i style="margin-left: 10px;" class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Choose which ESP port is connected to your buzzer"></i></label>
+        <span class="col-xs-6 col-md-5">
+                <select class="form-control input-sm" id="gpiobzr">
+                    <option selected="selected" value="0">GPIO-0</option>
+                    <option value="1">GPIO-1</option>
+                    <option value="2">GPIO-2</option>
+                    <option value="4">GPIO-4</option>
+                    <option value="5">GPIO-5</option>
+                    <option value="12">GPIO-12</option>
+                    <option value="13">GPIO-13</option>
+                    <option value="14">GPIO-14</option>
+                    <option value="15">GPIO-15</option>
+                    <option value="16">GPIO-16</option>
+                </select>
+              </span>
+        <span class="col-xs-3">
+                <button id="testb" type="button" class="btn btn-primary btn-xs" onclick="testBuzzer()">Test</button><i style="margin-left: 10px;" class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="popover" data-trigger="hover" data-placement="left" data-content="Test previous relay setting. Keep in mind that this is actually triggers the relay."></i>
+              </span>
+    </div>
+    <br>
+    
+    <div class="row form-group">
+        <label class="col-xs-3">Switch Type<i style="margin-left: 10px;" class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Depending on your electrical setup, you can choose the switch type"></i></label>
+        <span class="col-xs-9 col-md-5">
+            <select class="form-control input-sm" id="typeswch">
+              <option selected="selected" value="1">Pull Down</option>
+              <option value="0">Pull Up</option>
+              <option value="2">Internal Pull Up</option>
+            </select>
+            </span>
+    </div>
+    <div class="row form-group">
+        <label class="col-xs-3">Switch Pin<i style="margin-left: 10px;" class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Choose which ESP port is connected to your manual switch"></i></label>
+        <span class="col-xs-6 col-md-5">
+                <select class="form-control input-sm" id="gpioswch">
+                    <option value="0">GPIO-0</option>
+                    <option value="1">GPIO-1</option>
+                    <option selected="selected" value="2">GPIO-2</option>
+                    <option value="4">GPIO-4</option>
+                    <option value="5">GPIO-5</option>
+                    <option value="12">GPIO-12</option>
+                    <option value="13">GPIO-13</option>
+                    <option value="14">GPIO-14</option>
+                    <option value="15">GPIO-15</option>
+                    <option value="16">GPIO-16</option>
+                </select>
+              </span>
+    </div>
+    <br>
+
+    <div class="row form-group">
         <label class="col-xs-3">Relay Type<i style="margin-left: 10px;" class="glyphicon glyphicon-info-sign" aria-hidden="true" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Depending on your electrical setup, you can choose the relay type"></i></label>
         <span class="col-xs-9 col-md-5">
             <select class="form-control input-sm" id="typerly">
@@ -212,13 +263,13 @@
                     <option value="0">GPIO-0</option>
                     <option value="1">GPIO-1</option>
                     <option value="2">GPIO-2</option>
-                    <option selected="selected" value="4">GPIO-4</option>
+                    <option value="4">GPIO-4</option>
                     <option value="5">GPIO-5</option>
                     <option value="12">GPIO-12</option>
                     <option value="13">GPIO-13</option>
                     <option value="14">GPIO-14</option>
                     <option value="15">GPIO-15</option>
-                    <option value="16">GPIO-16</option>
+                    <option selected="selected" value="16">GPIO-16</option>
                 </select>
               </span>
         <span class="col-xs-3">

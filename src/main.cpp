@@ -80,6 +80,9 @@ unsigned long previousLoopMillis = 0;
 unsigned long cooldown = 0;
 bool shouldReboot = false;
 bool activateRelay = false;
+bool activateBuzzerTest = false;
+bool activateBuzzerPass = false;
+bool activateBuzzerNotPass = false;
 bool inAPMode = false;
 bool isWifiConnected = false;
 int autoRestartIntervalSeconds = 0;
@@ -98,6 +101,10 @@ char *mqttTopic = NULL;
 
 int rfidss;
 int readerType;
+int buzzerPin;
+int switchPin;
+int switchType;
+int switchActiveState;
 int relayPin;
 int relayType;
 int activateTime;
@@ -572,6 +579,7 @@ void ICACHE_FLASH_ATTR rfidloop() {
 
             // Check if user have an access
             if (AccType == 1) {
+                activateBuzzerPass = true;
                 activateRelay = true; // Give user Access to Door, Safe, Box whatever you like
                 previousMillis = millis();
 #ifdef DEBUG
@@ -580,6 +588,7 @@ void ICACHE_FLASH_ATTR rfidloop() {
             }
             else if (AccType == 99)
             {
+                activateBuzzerPass = true;
                 previousMillis = millis();
                 doEnableWifi = true;
                 activateRelay = true; // Give user Access to Door, Safe, Box whatever you like
@@ -588,6 +597,7 @@ void ICACHE_FLASH_ATTR rfidloop() {
 #endif
             }
             else {
+                activateBuzzerNotPass = true;
 #ifdef DEBUG
                 Serial.println(" does not have access");
 #endif
@@ -630,6 +640,7 @@ void ICACHE_FLASH_ATTR rfidloop() {
         data += " " + String(type);
         writeEvent("WARN", "rfid", "Unknown rfid tag is scanned", data);
         writeLatest(uid, "Unknown", 98);
+        activateBuzzerNotPass = true;
 #ifdef DEBUG
         Serial.println(" = unknown PICC");
 #endif
@@ -826,6 +837,9 @@ void ICACHE_FLASH_ATTR onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient *
                 activateRelay = true;
                 previousMillis = millis();
             }
+            else if (strcmp(command, "testbuzzer") == 0) {
+                activateBuzzerTest = true;
+            }
             else if (strcmp(command, "scan")  == 0) {
                 WiFi.scanNetworksAsync(printScanResult, true);
             }
@@ -978,10 +992,18 @@ bool ICACHE_FLASH_ATTR loadConfiguration() {
     timeZone = ntp["timezone"];
 
     activateTime = hardware["rtime"];
+    buzzerPin = hardware["bpin"];
     relayPin = hardware["rpin"];
     relayType = hardware["rtype"];
+    switchPin = hardware["swpin"];
+    switchType = hardware["swtype"];
+    switchActiveState = switchType & 0b0001;
+    
+    pinMode(buzzerPin, OUTPUT);
+    digitalWrite(relayPin, LOW);
     pinMode(relayPin, OUTPUT);
     digitalWrite(relayPin, relayType);
+    pinMode(switchPin, switchType | 0b0010);
 
     const char * ssid = network["ssid"];
     const char * password = network["pswd"];
@@ -1305,12 +1327,44 @@ void ICACHE_RAM_ATTR loop() {
         delay(100);
         ESP.restart();
     }
+    if (digitalRead(switchPin) == switchActiveState) {
+        activateRelay = true;
+        previousMillis = millis();
+        activateBuzzerPass = true;
+        delay(100);
+    }
     if (currentMillis - previousMillis >= activateTime && activateRelay) {
         activateRelay = false;
         digitalWrite(relayPin, relayType);
     }
     if (activateRelay) {
         digitalWrite(relayPin, !relayType);
+    }
+    if (activateBuzzerPass || activateBuzzerTest) {
+        activateBuzzerPass = false;
+        analogWrite(buzzerPin, 400);
+        delay(300);
+        analogWrite(buzzerPin, 0);
+    }
+    if (activateBuzzerTest) {
+        delay(300);
+    }
+    if (activateBuzzerNotPass || activateBuzzerTest) {
+        activateBuzzerNotPass = false;
+        analogWrite(buzzerPin, 512);
+        delay(100);
+        analogWrite(buzzerPin, 0);
+        delay(100);
+        analogWrite(buzzerPin, 512);
+        delay(100);
+        analogWrite(buzzerPin, 0);
+        delay(100);
+        analogWrite(buzzerPin, 512);
+        delay(100);
+        analogWrite(buzzerPin, 0);
+    }
+    if (activateBuzzerTest) {
+        activateBuzzerTest = false;
     }
     if (isWifiConnected) {
         wiFiUptimeMillis += deltaTime;
